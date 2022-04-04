@@ -1,0 +1,21 @@
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaConnect
+metadata:
+  name: postgres-connect-cluster
+  annotations:
+    strimzi.io/use-connector-resources: "false"
+spec:
+  image: ehsaniara/postgres-connect-debezium:latest
+  replicas: 1
+  imagePullPolicy: Always
+  bootstrapServers: my-cluster-kafka-bootstrap:9093
+  tls:
+    trustedCertificates:
+      - secretName: my-cluster-cluster-ca-cert
+        certificate: ca.crt
+  config:
+    config.storage.replication.factor: 1
+    offset.storage.replication.factor: 1
+    status.storage.replication.factor: 1
+    config.providers: file
+    config.providers.file.class: org.apache.kafka.common.config.provider.FileConfigProvider
